@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Procurar Lobby</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f5fb;--card:#fff;--text:#16182b;--mut:#666b85;--line:#dfe2f0;--acc:#6c3df4;--acc2:#fff;--ok:#12a36b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1020;--card:#1a1c33;--text:#eceefc;--mut:#9aa0c3;--line:#2c2f52;--acc:#8d6bff;--acc2:#0f1020;--ok:#3ed39a}}
+:root[data-theme="dark"]{--bg:#0f1020;--card:#1a1c33;--text:#eceefc;--mut:#9aa0c3;--line:#2c2f52;--acc:#8d6bff;--acc2:#0f1020;--ok:#3ed39a}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0 2px}h2{font-size:16px;margin:0 0 10px}
+.sub{color:var(--mut);margin:0 0 14px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+#lang{width:auto;padding:6px 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-weight:600}
+.tab.on{background:var(--acc);color:var(--acc2);border-color:var(--acc)}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button.pri{background:var(--acc);color:var(--acc2);border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;margin-top:12px;width:100%}
+button.sec{background:transparent;color:var(--acc);border:1px solid var(--acc);border-radius:10px;padding:8px 12px;font:inherit;font-weight:600}
+a.sec{text-decoration:none;display:inline-block;border:1px solid var(--acc);color:var(--acc);border-radius:10px;padding:8px 12px;font-weight:600}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px}
+.chip{white-space:nowrap;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:99px;padding:5px 11px;font:inherit;font-size:13px}
+.chip.on{background:var(--acc);color:var(--acc2);border-color:var(--acc);font-weight:700}
+.pick{display:flex;align-items:center;gap:8px;margin:8px 0}.pick input{width:auto}
+.pick small{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.th{display:block;width:100%;text-align:left;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font:inherit}
+.th.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.th small{display:block;color:var(--mut)}
+.lnk{background:none;border:0;padding:0;color:var(--text);font:inherit;font-weight:700;font-size:16px;text-decoration:underline dotted;cursor:pointer;text-align:left}
+.ok.no{color:var(--mut)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444;margin-left:6px;vertical-align:middle}
+.bdg{background:#ef4444;color:#fff;border-radius:99px;padding:1px 7px;font-size:12px;margin-left:4px}
+#pv{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:6;padding:16px}
+#pv.on{display:flex}
+.pvc{background:var(--card);border-radius:16px;padding:16px;width:100%;max-width:420px;max-height:90%;overflow-y:auto}
+.pr{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+.pr span{color:var(--mut);font-size:13px}
+.sec.on{background:var(--acc);color:var(--acc2)}
+.rate{display:inline-flex;gap:6px}
+.rep{font-size:12px;color:var(--mut);margin-left:6px}
+.ok-v{color:var(--ok);font-size:12px;font-weight:600;margin-left:6px}
+.blk{background:none;border:0;padding:0 0 0 4px;font-size:11px;opacity:.6;cursor:pointer}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--bg);border:1px solid var(--line);margin:2px 4px 2px 0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.nick{font-weight:700;font-size:16px}.ok{color:var(--ok);font-weight:600;font-size:12px}
+.acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.empty{text-align:center;color:var(--mut);padding:24px}
+#chat{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:5}
+#chat.on{display:flex}
+.sheet{background:var(--card);width:100%;max-width:720px;height:80%;border-radius:18px 18px 0 0;display:flex;flex-direction:column;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+#msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:8px 0}
+.m{max-width:80%;padding:8px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--line);align-self:flex-start}
+.m.me{align-self:flex-end;background:var(--acc);color:var(--acc2);border-color:var(--acc)}
+.m small{display:block;opacity:.7;font-size:11px}
+.send{display:flex;gap:8px}.send button{margin:0;width:auto}
+.note{font-size:12px;color:var(--mut);margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+  <div class="head">
+    <div><h1>🎮 <span data-i18n="title"></span></h1><p class="sub" data-i18n="sub"></p></div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"><button class="sec" id="authBtn" data-i18n="login"></button>
+    <select id="lang" aria-label="Language">
+      <option value="pt">Português</option><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option>
+    </select></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-t="ads" data-i18n="tabAds"></button>
+    <button class="tab" data-t="chats"><span data-i18n="tabChats"></span><span id="badge" class="bdg" hidden></span></button>
+    <button class="tab" data-t="new" data-i18n="tabNew"></button>
+    <button class="tab" data-t="prof" data-i18n="tabProf"></button>
+  </div>
+
+  <section id="ads">
+    <div class="filters">
+      <select id="fMode"><option value="" data-i18n="allModes"></option><option>Duo</option><option>Trio</option><option>Squad (4)</option></select>
+      <select id="fPlat"><option value="" data-i18n="allPlats"></option><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Switch</option><option>Mobile</option></select>
+      <select id="fLvl"><option value="" data-i18n="allRanks"></option><option>Bronze</option><option>Silver</option><option>Gold</option><option>Platinum</option><option>Diamond</option><option>Elite</option><option>Champion</option><option>Unreal</option></select>
+      <select id="fRole"><option value="" data-i18n="allRoles"></option><option value="Fragger">Fragger</option><option value="IGL">IGL</option><option value="Support" data-i18n="roleSup"></option></select>
+      <select id="fSrv"><option value="" data-i18n="allSrv"></option><option>Europe</option><option>NA East</option><option>NA Central</option><option>NA West</option><option>Brazil</option><option>Asia</option><option>Oceania</option><option>Middle East</option></select>
+      <button class="sec" id="fSaved" style="grid-column:1/-1" data-i18n="onlySaved"></button>
+      <input id="fText" data-ph="fText" style="grid-column:1/-1">
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <section id="chats" hidden><div id="chatList"></div></section>
+
+  <section id="new" hidden>
+    <div class="card">
+      <h2 data-i18n="pubH"></h2>
+      <label data-i18n="tour"></label><input id="aTour" data-ph="tourPh">
+      <div class="row">
+        <div><label data-i18n="mode"></label><select id="aMode"><option>Duo</option><option>Trio</option><option>Squad (4)</option></select></div>
+        <div><label data-i18n="date"></label><input id="aDate" type="date"></div>
+      </div>
+      <label data-i18n="srv"></label><select id="aSrv"><option>Europe</option><option>NA East</option><option>NA Central</option><option>NA West</option><option>Brazil</option><option>Asia</option><option>Oceania</option><option>Middle East</option></select>
+      <label data-i18n="needL"></label>
+      <div class="row3">
+        <div><label>Fragger</label><select id="nFragger"><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
+        <div><label>IGL</label><select id="nIGL"><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
+        <div><label data-i18n="roleSup"></label><select id="nSupport"><option>0</option><option>1</option><option>2</option><option>3</option></select></div>
+      </div>
+      <label data-i18n="note"></label><textarea id="aNote" rows="2" data-ph="notePh"></textarea>
+      <p class="note" data-i18n="pubNote"></p>
+      <button class="pri" id="pub" data-i18n="pubBtn"></button>
+    </div>
+  </section>
+
+  <section id="prof" hidden>
+    <div class="card">
+      <h2 data-i18n="profH"></h2>
+      <label data-i18n="nick"></label><input id="pNick" maxlength="24">
+      <div class="row">
+        <div><label data-i18n="plat"></label><select id="pPlat"><option>PC</option><option>PlayStation</option><option>Xbox</option><option>Switch</option><option>Mobile</option></select></div>
+        <div><label data-i18n="rank"></label><select id="pLvl"><option>Bronze</option><option>Silver</option><option>Gold</option><option>Platinum</option><option>Diamond</option><option>Elite</option><option>Champion</option><option>Unreal</option></select></div>
+      </div>
+      <label data-i18n="srv"></label><select id="pSrv"><option>Europe</option><option>NA East</option><option>NA Central</option><option>NA West</option><option>Brazil</option><option>Asia</option><option>Oceania</option><option>Middle East</option></select>
+      <label data-i18n="role"></label><select id="pRole"><option value="Fragger">Fragger</option><option value="IGL">IGL</option><option value="Support" data-i18n="roleSup"></option></select>
+      <label data-i18n="region"></label><input id="pReg" data-ph="regionPh">
+      <label data-i18n="disc"></label><input id="pDisc" data-ph="discPh">
+      <label data-i18n="trk"></label><input id="pTrk" data-ph="trkPh" inputmode="url">
+      <button class="pri" id="saveP" data-i18n="saveP"></button>
+      <p class="note" data-i18n="profNote"></p>
+    </div>
+  </section>
+</main>
+
+<div id="chat">
+  <div class="sheet">
+    <div class="top"><h2 id="cTitle" style="margin:0"></h2><button class="sec" id="cClose" data-i18n="close"></button></div>
+    <div id="cSub" class="note" style="margin:2px 0 0"></div>
+    <div id="rateBar" class="note" style="margin:2px 0 0"></div>
+    <div id="actBar" class="acts" style="margin:6px 0 0"></div>
+    <div id="chips" class="chips"></div>
+    <div id="msgs"></div>
+    <div class="send"><input id="cIn" data-ph="msgPh" maxlength="300"><button class="pri" id="cSend" data-i18n="send"></button></div>
+  </div>
+</div>
+
+<div id="pv"><div class="pvc" id="pvBox"></div></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,doc,addDoc,setDoc,updateDoc,deleteDoc,query,where,orderBy,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// COLA AQUI os dados do teu projeto Firebase (ver LEIA-ME.md)
+const firebaseConfig={apiKey:"AIzaSyCAT0WAC6fqMokgVpoohZBmVr-mz6Hywag",authDomain:"procurar-lobby.firebaseapp.com",projectId:"procurar-lobby",appId:"1:666388107812:web:e523776ce46db026b93eb1"};
+
+let doLogin=()=>{},doLogout=()=>{};
+function mkDb(fs){
+  const wrap=q=>({
+    where:(f,o,v)=>wrap(query(q,where(f,o,v))),
+    orderBy:(f,d)=>wrap(query(q,orderBy(f,d||"asc"))),
+    onSnapshot:(cb,err)=>onSnapshot(q,cb,err)
+  });
+  return {collection:p=>{const c=collection(fs,p);return {...wrap(c),add:d=>addDoc(c,d),
+    doc:id=>{const r=doc(fs,p,id);return {set:d=>setDoc(r,d),update:d=>updateDoc(r,d),delete:()=>deleteDoc(r)}}}}};
+}
+const T={
+pt:{title:"Procurar Lobby",sub:"Chega de jogar sozinho nos torneios. Encontra a equipa certa para a vitória.",tabAds:"Anúncios",tabNew:"Publicar",tabProf:"Perfil",allModes:"Todos os modos",allPlats:"Todas as plataformas",allRanks:"Todos os ranks",fText:"Procurar torneio ou campeonato…",srv:"Servidor",allSrv:"Todos os servidores",loading:"A carregar…",empty:"Ainda não há anúncios. Sê o primeiro a publicar!",unavailable:"Os anúncios partilhados não estão disponíveis neste momento.",pubH:"Publicar anúncio",tour:"Torneio / campeonato",tourPh:"Ex.: Cash Cup, torneio da comunidade",mode:"Modo",date:"Data do torneio",note:"Nota",notePh:"O que procuras: horário, estilo de jogo…",pubNote:"Usa os dados do teu perfil (nick, plataforma, região, rank, Discord).",pubBtn:"Publicar",profH:"Perfil",nick:"Nick",plat:"Plataforma",rank:"Rank",region:"Região",regionPh:"Ex.: Portugal, Europa",disc:"Discord (opcional)",discPh:"O teu utilizador do Discord",trk:"Link do Fortnite Tracker",trkPh:"https://fortnitetracker.com/profile/…",alertTrk:"Indica o link do teu perfil do Fortnite Tracker (fortnitetracker.com).",editP:"Editar perfil",role:"Função",roleSup:"Suporte",needL:"Quantos jogadores procuras?",needTag:"Procuro:",allRoles:"Todas as funções",tabChats:"Conversas",inbox:"💬 Conversas",group:"Grupo",pickGroup:"Escolhe quem queres juntar num grupo:",mkGroup:"👥 Criar grupo com selecionados",alertGroup:"Seleciona pelo menos uma pessoa.",noChats:"Ainda não tens conversas.",allChats:"Todas as conversas",login:"Entrar com Google",logout:"Sair",loginMsg:"Entra com a tua conta Google para ver anúncios e conversar.",setup:"Falta configurar o Firebase: segue o LEIA-ME e cola os teus dados no ficheiro index.html.",filled:"✔ preenchido",markFilled:"Marcar como preenchido",reopen:"Reabrir",match:"Compatibilidade",join:"🙋 Quero entrar",onlySaved:"⭐ Só guardados",reputation:"Reputação",rate:"Avaliar",block:"Bloquear",delChat:"Apagar conversa",delGroup:"Apagar grupo",leaveGroup:"Sair do grupo",confirmBlock:"Bloquear {n}? Deixas de ver os anúncios e as mensagens desta pessoa.",confirmDel:"Apagar esta conversa? Desaparece só para ti e volta se chegarem mensagens novas.",confirmDelG:"Apagar este grupo para todos?",confirmLeave:"Sair deste grupo?",blockedH:"Bloqueados",unblock:"Desbloquear",cancel:"Cancelar",verified:"✔ Tracker confere",joinMsg:"Olá! Sou o {nick} ({rank}, {role}, servidor {srv}). Quero entrar na tua equipa para {tour} ({date}). 🙋",alertNeed:"Escolhe entre 1 e {n} jogadores para este modo.",alertDuoSup:"No Duo só podes procurar 1 Fragger ou 1 IGL. O Suporte é para Trio ou Squad.",saveP:"Guardar perfil",saved:"Guardado ✓",profNote:"O perfil fica guardado só neste dispositivo e é usado nos teus anúncios.",looking:"● à procura",chat:"💬 Chat",copied:"Copiado ✓",remove:"Remover",chatPre:"Chat · ",close:"Fechar",msgPh:"Escreve uma mensagem…",send:"Enviar",hello:"Diz olá 👋",alertProf:"Preenche primeiro o teu perfil (nick).",alertDate:"Indica a data do torneio.",alertTour:"Indica o torneio.",alertDb:"Não foi possível ligar à base de dados partilhada."},
+en:{title:"Find a Lobby",sub:"Stop going solo in tournaments. Find the right team for the win.",tabAds:"Listings",tabNew:"Post",tabProf:"Profile",allModes:"All modes",allPlats:"All platforms",allRanks:"All ranks",fText:"Search tournament or championship…",srv:"Server",allSrv:"All servers",loading:"Loading…",empty:"No listings yet. Be the first to post!",unavailable:"Shared listings aren’t available right now.",pubH:"Post a listing",tour:"Tournament / competition",tourPh:"E.g. Cash Cup, community tournament",mode:"Mode",date:"Tournament date",note:"Note",notePh:"What you’re looking for: schedule, play style…",pubNote:"Uses your profile details (nick, platform, region, rank, Discord).",pubBtn:"Post",profH:"Profile",nick:"Nickname",plat:"Platform",rank:"Rank",region:"Region",regionPh:"E.g. UK, Europe",disc:"Discord (optional)",discPh:"Your Discord username",trk:"Fortnite Tracker link",trkPh:"https://fortnitetracker.com/profile/…",alertTrk:"Enter your Fortnite Tracker profile link (fortnitetracker.com).",editP:"Edit profile",role:"Role",roleSup:"Support",needL:"How many players do you need?",needTag:"Looking for:",allRoles:"All roles",tabChats:"Chats",inbox:"💬 Chats",group:"Group",pickGroup:"Choose who to add to a group:",mkGroup:"👥 Create group with selected",alertGroup:"Select at least one person.",noChats:"No chats yet.",allChats:"All chats",login:"Sign in with Google",logout:"Sign out",loginMsg:"Sign in with your Google account to see listings and chat.",setup:"Firebase isn’t set up yet: follow the README and paste your config into index.html.",filled:"✔ filled",markFilled:"Mark as filled",reopen:"Reopen",match:"Compatibility",join:"🙋 Request to join",onlySaved:"⭐ Saved only",reputation:"Reputation",rate:"Rate",block:"Block",delChat:"Delete chat",delGroup:"Delete group",leaveGroup:"Leave group",confirmBlock:"Block {n}? You will no longer see this person’s listings or messages.",confirmDel:"Delete this chat? It disappears only for you and comes back if new messages arrive.",confirmDelG:"Delete this group for everyone?",confirmLeave:"Leave this group?",blockedH:"Blocked",unblock:"Unblock",cancel:"Cancel",verified:"✔ Tracker matches",joinMsg:"Hi! I’m {nick} ({rank}, {role}, {srv} server). I’d like to join your team for {tour} ({date}). 🙋",alertNeed:"Pick between 1 and {n} players for this mode.",alertDuoSup:"In Duo you can only look for 1 Fragger or 1 IGL. Support is for Trio or Squad.",saveP:"Save profile",saved:"Saved ✓",profNote:"Your profile is saved on this device only and is used in your listings.",looking:"● looking",chat:"💬 Chat",copied:"Copied ✓",remove:"Remove",chatPre:"Chat · ",close:"Close",msgPh:"Write a message…",send:"Send",hello:"Say hi 👋",alertProf:"Fill in your profile (nickname) first.",alertDate:"Enter the tournament date.",alertTour:"Enter the tournament.",alertDb:"Couldn’t connect to the shared database."},
+es:{title:"Buscar Lobby",sub:"Deja de jugar solo en los torneos. Encuentra el equipo ideal para la victoria.",tabAds:"Anuncios",tabNew:"Publicar",tabProf:"Perfil",allModes:"Todos los modos",allPlats:"Todas las plataformas",allRanks:"Todos los rangos",fText:"Buscar torneo o campeonato…",srv:"Servidor",allSrv:"Todos los servidores",loading:"Cargando…",empty:"Aún no hay anuncios. ¡Sé el primero en publicar!",unavailable:"Los anuncios compartidos no están disponibles ahora.",pubH:"Publicar anuncio",tour:"Torneo / campeonato",tourPh:"Ej.: Cash Cup, torneo de la comunidad",mode:"Modo",date:"Fecha del torneo",note:"Nota",notePh:"Qué buscas: horario, estilo de juego…",pubNote:"Usa los datos de tu perfil (nick, plataforma, región, rango, Discord).",pubBtn:"Publicar",profH:"Perfil",nick:"Nick",plat:"Plataforma",rank:"Rango",region:"Región",regionPh:"Ej.: España, Europa",disc:"Discord (opcional)",discPh:"Tu usuario de Discord",trk:"Enlace de Fortnite Tracker",trkPh:"https://fortnitetracker.com/profile/…",alertTrk:"Indica el enlace de tu perfil de Fortnite Tracker (fortnitetracker.com).",editP:"Editar perfil",role:"Rol",roleSup:"Apoyo",needL:"¿Cuántos jugadores buscas?",needTag:"Busco:",allRoles:"Todos los roles",tabChats:"Chats",inbox:"💬 Chats",group:"Grupo",pickGroup:"Elige a quién añadir a un grupo:",mkGroup:"👥 Crear grupo con los seleccionados",alertGroup:"Selecciona al menos una persona.",noChats:"Aún no tienes chats.",allChats:"Todos los chats",login:"Entrar con Google",logout:"Salir",loginMsg:"Entra con tu cuenta de Google para ver anuncios y chatear.",setup:"Falta configurar Firebase: sigue el LÉEME y pega tus datos en index.html.",filled:"✔ completo",markFilled:"Marcar como completo",reopen:"Reabrir",match:"Compatibilidad",join:"🙋 Quiero unirme",onlySaved:"⭐ Solo guardados",reputation:"Reputación",rate:"Valorar",block:"Bloquear",delChat:"Eliminar chat",delGroup:"Eliminar grupo",leaveGroup:"Salir del grupo",confirmBlock:"¿Bloquear a {n}? Dejarás de ver los anuncios y mensajes de esta persona.",confirmDel:"¿Eliminar este chat? Desaparece solo para ti y vuelve si llegan mensajes nuevos.",confirmDelG:"¿Eliminar este grupo para todos?",confirmLeave:"¿Salir de este grupo?",blockedH:"Bloqueados",unblock:"Desbloquear",cancel:"Cancelar",verified:"✔ Tracker coincide",joinMsg:"¡Hola! Soy {nick} ({rank}, {role}, servidor {srv}). Quiero unirme a tu equipo para {tour} ({date}). 🙋",alertNeed:"Elige entre 1 y {n} jugadores para este modo.",alertDuoSup:"En Dúo solo puedes buscar 1 Fragger o 1 IGL. El Apoyo es para Trío o Squad.",saveP:"Guardar perfil",saved:"Guardado ✓",profNote:"El perfil se guarda solo en este dispositivo y se usa en tus anuncios.",looking:"● buscando",chat:"💬 Chat",copied:"Copiado ✓",remove:"Eliminar",chatPre:"Chat · ",close:"Cerrar",msgPh:"Escribe un mensaje…",send:"Enviar",hello:"Saluda 👋",alertProf:"Rellena primero tu perfil (nick).",alertDate:"Indica la fecha del torneo.",alertTour:"Indica el torneo.",alertDb:"No se pudo conectar con la base de datos compartida."},
+fr:{title:"Trouver un Lobby",sub:"Fini de jouer en solo dans les tournois. Trouve l’équipe idéale pour la victoire.",tabAds:"Annonces",tabNew:"Publier",tabProf:"Profil",allModes:"Tous les modes",allPlats:"Toutes les plateformes",allRanks:"Tous les rangs",fText:"Rechercher un tournoi ou un championnat…",srv:"Serveur",allSrv:"Tous les serveurs",loading:"Chargement…",empty:"Aucune annonce pour l’instant. Sois le premier à publier !",unavailable:"Les annonces partagées ne sont pas disponibles pour le moment.",pubH:"Publier une annonce",tour:"Tournoi / compétition",tourPh:"Ex. : Cash Cup, tournoi de la communauté",mode:"Mode",date:"Date du tournoi",note:"Note",notePh:"Ce que tu cherches : horaires, style de jeu…",pubNote:"Utilise les infos de ton profil (pseudo, plateforme, région, rang, Discord).",pubBtn:"Publier",profH:"Profil",nick:"Pseudo",plat:"Plateforme",rank:"Rang",region:"Région",regionPh:"Ex. : France, Europe",disc:"Discord (facultatif)",discPh:"Ton nom d’utilisateur Discord",trk:"Lien Fortnite Tracker",trkPh:"https://fortnitetracker.com/profile/…",alertTrk:"Indique le lien de ton profil Fortnite Tracker (fortnitetracker.com).",editP:"Modifier le profil",role:"Rôle",roleSup:"Soutien",needL:"Combien de joueurs cherches-tu ?",needTag:"Je cherche :",allRoles:"Tous les rôles",tabChats:"Discussions",inbox:"💬 Discussions",group:"Groupe",pickGroup:"Choisis qui ajouter à un groupe :",mkGroup:"👥 Créer un groupe avec la sélection",alertGroup:"Sélectionne au moins une personne.",noChats:"Pas encore de discussions.",allChats:"Toutes les discussions",login:"Se connecter avec Google",logout:"Déconnexion",loginMsg:"Connecte-toi avec ton compte Google pour voir les annonces et discuter.",setup:"Firebase n’est pas encore configuré : suis le LISEZ-MOI et colle ta config dans index.html.",filled:"✔ complet",markFilled:"Marquer comme complet",reopen:"Rouvrir",match:"Compatibilité",join:"🙋 Demander à rejoindre",onlySaved:"⭐ Favoris seulement",reputation:"Réputation",rate:"Évaluer",block:"Bloquer",delChat:"Supprimer la discussion",delGroup:"Supprimer le groupe",leaveGroup:"Quitter le groupe",confirmBlock:"Bloquer {n} ? Tu ne verras plus les annonces ni les messages de cette personne.",confirmDel:"Supprimer cette discussion ? Elle disparaît seulement pour toi et revient si de nouveaux messages arrivent.",confirmDelG:"Supprimer ce groupe pour tous ?",confirmLeave:"Quitter ce groupe ?",blockedH:"Bloqués",unblock:"Débloquer",cancel:"Annuler",verified:"✔ Tracker concordant",joinMsg:"Salut ! Je suis {nick} ({rank}, {role}, serveur {srv}). Je voudrais rejoindre ton équipe pour {tour} ({date}). 🙋",alertNeed:"Choisis entre 1 et {n} joueurs pour ce mode.",alertDuoSup:"En Duo, tu peux chercher seulement 1 Fragger ou 1 IGL. Le Soutien est pour Trio ou Squad.",saveP:"Enregistrer le profil",saved:"Enregistré ✓",profNote:"Le profil est enregistré uniquement sur cet appareil et sert pour tes annonces.",looking:"● cherche",chat:"💬 Chat",copied:"Copié ✓",remove:"Supprimer",chatPre:"Chat · ",close:"Fermer",msgPh:"Écris un message…",send:"Envoyer",hello:"Dis bonjour 👋",alertProf:"Remplis d’abord ton profil (pseudo).",alertDate:"Indique la date du tournoi.",alertTour:"Indique le tournoi.",alertDb:"Impossible de se connecter à la base de données partagée."}
+};
+const $=s=>document.querySelector(s);
+let db=null,myId=null,ads=[],unsubAds=null,unsubMsgs=null,curAd=null,chatNick="",thread=null,convs=[],groups=[],unsubC=null,unsubG=null;
+let prof={},lang="pt";
+try{prof=JSON.parse(localStorage.getItem("prof")||"{}")}catch(e){}
+try{lang=localStorage.getItem("lang")||""}catch(e){}
+if(!T[lang]){const n=(navigator.language||"pt").slice(0,2);lang=T[n]?n:"pt"}
+const t=k=>T[lang][k]||k;
+
+function applyLang(){
+  document.documentElement.lang=lang;$("#lang").value=lang;
+  updateBadge();
+  document.querySelectorAll("[data-i18n]").forEach(e=>e.textContent=t(e.dataset.i18n));
+  document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
+  renderChats();
+  render();
+}
+$("#lang").onchange=e=>{lang=e.target.value;try{localStorage.setItem("lang",lang)}catch(_){}applyLang()};
+
+["Nick","Plat","Lvl","Srv","Role","Reg","Disc","Trk"].forEach(k=>{const v=prof[k.toLowerCase()];if(v)$("#p"+k).value=v});
+let editing=true;
+function setEdit(on){editing=on;["Nick","Plat","Lvl","Srv","Role","Reg","Disc","Trk"].forEach(k=>$("#p"+k).disabled=!on);const b=$("#saveP");b.dataset.i18n=on?"saveP":"editP";b.textContent=t(b.dataset.i18n)}
+setEdit(!prof.nick);
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===b));
+  ["ads","chats","new","prof"].forEach(id=>$("#"+id).hidden=id!==b.dataset.t);
+});
+
+$("#saveP").onclick=()=>{
+  if(!editing){setEdit(true);return}
+  if(!$("#pNick").value.trim())return alert(t("alertProf"));
+  const trk=$("#pTrk").value.trim();if(!trk||!trkHref(trk))return alert(t("alertTrk"));
+  prof={nick:$("#pNick").value.trim(),plat:$("#pPlat").value,lvl:$("#pLvl").value,reg:$("#pReg").value.trim(),disc:$("#pDisc").value.trim(),role:$("#pRole").value,srv:$("#pSrv").value,trk};
+  try{localStorage.setItem("prof",JSON.stringify(prof))}catch(e){}
+  if(db&&myId)ads.filter(a=>a.authorId===myId&&(a.lvl!==prof.lvl||a.plat!==prof.plat||a.nick!==prof.nick||a.reg!==prof.reg||a.disc!==prof.disc||(a.trk||"")!==prof.trk||(a.role||"")!==prof.role)).forEach(a=>db.collection("ads").doc(a.id).update({nick:prof.nick,plat:prof.plat,lvl:prof.lvl,reg:prof.reg,disc:prof.disc,trk:prof.trk,role:prof.role}).catch(()=>{}));
+  render();setEdit(false);$("#saveP").textContent=t("saved");setTimeout(()=>{if(!editing)$("#saveP").textContent=t("editP")},1500);
+};
+
+function esc(s){const d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
+
+function roleLabel(v){return v==="Support"?t("roleSup"):v}
+function trkHref(u){try{const x=new URL(u);return x.protocol==="https:"&&/(^|\.)fortnitetracker\.com$/.test(x.hostname)?x.href:""}catch(e){return ""}}
+let loaded=false;
+function render(){
+  if(!myId){$("#list").innerHTML=`<div class="empty"><p>${t("loginMsg")}</p><button class="pri" data-login="1">${t("login")}</button></div>`;return}
+  if(!loaded&&db){$("#list").innerHTML=`<div class="empty">${t("loading")}</div>`;return}
+  if(!db){$("#list").innerHTML=`<div class="empty">${t("unavailable")}</div>`;return}
+  const today=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);const m=$("#fMode").value,p=$("#fPlat").value,l=$("#fLvl").value,r=$("#fRole").value,sv=$("#fSrv").value,q=$("#fText").value.toLowerCase();
+  const rows=ads.filter(a=>!blocked[a.authorId]&&(a.open!==false||a.authorId===myId)&&(!onlySaved||saved.has(a.id))&&(!a.date||a.date>=today)&&(!m||a.mode===m)&&(!p||a.plat===p)&&(!l||a.lvl===l)&&(!r||(a.need&&a.need[r]>0))&&(!sv||a.srv===sv)&&(!q||(a.tour||"").toLowerCase().includes(q))).sort((x,y)=>(x.date||"9999").localeCompare(y.date||"9999"));
+  if(!rows.length){$("#list").innerHTML=`<div class="empty">${t("empty")}</div>`;return}
+  $("#list").innerHTML=rows.map(a=>`<div class="card">
+    <div class="top"><div><button class="nick lnk" data-prof="${a.id}">${esc(a.nick)}</button>${verOf(a)?`<span class="ok-v">${t("verified")}</span>`:""}<span class="rep">${repOf(a.authorId)}</span></div><span class="ok ${a.open===false?"no":""}">${a.open===false?t("filled"):t("looking")}</span></div>
+    <div><span class="tag">${esc(a.mode)}</span>${a.srv?`<span class="tag">🌍 ${esc(a.srv)}</span>`:""}<span class="tag">${esc(a.plat)}</span><span class="tag">${esc(a.lvl)}</span>${a.role?`<span class="tag">${esc(roleLabel(a.role))}</span>`:""}${a.reg?`<span class="tag">${esc(a.reg)}</span>`:""}</div>
+    <div style="margin-top:6px"><b>${esc(a.tour)}</b>${a.date?` · ${esc(a.date)}`:""}</div>
+    ${a.need?`<div style="margin-top:6px">${t("needTag")} ${["Fragger","IGL","Support"].filter(r=>a.need[r]>0).map(r=>`<span class="tag">${a.need[r]}× ${esc(roleLabel(r))}</span>`).join("")}</div>`:""}
+    ${matchHtml(a)}
+    ${a.note?`<div style="color:var(--mut)">${esc(a.note)}</div>`:""}
+    <div class="acts">
+      ${a.authorId!==myId?`<button class="sec" data-save="${a.id}">${saved.has(a.id)?"⭐":"☆"}</button>`:""}
+      ${a.authorId!==myId&&a.open!==false?`<button class="sec" data-join="${a.id}">${t("join")}</button>`:""}
+      <button class="sec" data-chat="${a.id}">${a.authorId===myId?t("inbox"):t("chat")}</button>
+      ${a.disc?`<button class="sec" data-disc="${esc(a.disc)}">Discord: ${esc(a.disc)}</button>`:""}
+      ${trkHref(a.trk||"")?`<a class="sec" href="${trkHref(a.trk)}" target="_blank" rel="noopener noreferrer">📊 Tracker</a>`:""}
+      ${a.authorId===myId?`<button class="sec" data-fill="${a.id}" data-to="${a.open===false?"1":"0"}">${a.open===false?t("reopen"):t("markFilled")}</button>`:""}
+      ${a.authorId===myId?`<button class="sec" data-del="${a.id}">${t("remove")}</button>`:""}
+    </div></div>`).join("");
+}
+$("#fSaved").onclick=()=>{onlySaved=!onlySaved;$("#fSaved").classList.toggle("on",onlySaved);render()};
+["#fMode","#fPlat","#fLvl","#fRole","#fSrv"].forEach(s=>$(s).onchange=render);$("#fText").oninput=render;
+
+$("#list").onclick=async e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.login)doLogin();
+  if(b.dataset.prof)showProfile(b.dataset.prof);
+  if(b.dataset.fill&&db)db.collection("ads").doc(b.dataset.fill).update({open:b.dataset.to==="1"});
+  if(b.dataset.save){const i=b.dataset.save;saved.has(i)?saved.delete(i):saved.add(i);try{localStorage.setItem("saved",JSON.stringify([...saved]))}catch(e){}render()}
+  if(b.dataset.join)joinAd(b.dataset.join);
+  if(b.dataset.chat)startChat(b.dataset.chat);
+  if(b.dataset.disc){try{await navigator.clipboard.writeText(b.dataset.disc);b.textContent=t("copied")}catch(_){}}
+  if(b.dataset.del&&db)db.collection("ads").doc(b.dataset.del).delete();
+};
+
+function syncNeed(chg){
+  const mode=$("#aMode").value,max={Duo:1,Trio:2,"Squad (4)":3}[mode];
+  const a=[$("#nFragger"),$("#nIGL"),$("#nSupport")],sup=a[2];
+  if(mode==="Duo")sup.value="0";
+  a.forEach(e=>{[...e.options].forEach(o=>o.disabled=+o.value>max);if(+e.value>max)e.value=String(max)});
+  const sum=()=>a.reduce((n,e)=>n+ +e.value,0);
+  for(const e of a.filter(e=>e!==chg&&!(mode==="Duo"&&e===sup))){while(sum()>max&&+e.value>0)e.value=String(+e.value-1)}
+  sup.disabled=mode==="Duo";
+}
+$("#aMode").onchange=()=>syncNeed();
+["#nFragger","#nIGL","#nSupport"].forEach(id=>$(id).onchange=()=>syncNeed($(id)));
+syncNeed();
+$("#pub").onclick=async()=>{
+  if(!db)return alert(t("alertDb"));
+  if(!prof.nick)return alert(t("alertProf"));
+  if(!prof.trk)return alert(t("alertTrk"));
+  const tour=$("#aTour").value.trim();if(!tour)return alert(t("alertTour"));
+  if(!$("#aDate").value)return alert(t("alertDate"));
+  const need={Fragger:+$("#nFragger").value,IGL:+$("#nIGL").value,Support:+$("#nSupport").value};
+  const tot=need.Fragger+need.IGL+need.Support,max={Duo:1,Trio:2,"Squad (4)":3}[$("#aMode").value];
+  if(tot<1||tot>max)return alert(t("alertNeed").replace("{n}",max));
+  if($("#aMode").value==="Duo"&&need.Support>0)return alert(t("alertDuoSup"));
+  await db.collection("ads").add({authorId:myId,nick:prof.nick,plat:prof.plat||"PC",lvl:prof.lvl||"Bronze",reg:prof.reg||"",disc:prof.disc||"",trk:prof.trk||"",role:prof.role||"Fragger",
+    tour,need,srv:$("#aSrv").value,mode:$("#aMode").value,date:$("#aDate").value,note:$("#aNote").value.trim(),open:true,createdAt:Date.now()});
+  $("#aTour").value="";$("#aNote").value="";["nFragger","nIGL","nSupport"].forEach(i=>$("#"+i).value="0");
+  document.querySelector('[data-t="ads"]').click();
+};
+
+const sid=x=>String(x).replace(/[^A-Za-z0-9_.~:@+-]/g,"_");
+function showTab(n){document.querySelector('[data-t="'+n+'"]').click()}
+const RANKS=["Bronze","Silver","Gold","Platinum","Diamond","Elite","Champion","Unreal"];
+let saved=new Set(),onlySaved=false,rat={},myRat={},pvAd=null;
+try{saved=new Set(JSON.parse(localStorage.getItem("saved")||"[]"))}catch(e){}
+function trkName(u){try{const p=new URL(u).pathname.split("/").filter(Boolean);return p[0]==="profile"&&p[2]?decodeURIComponent(p[2]).trim():""}catch(e){return ""}}
+const verOf=a=>{const n=trkName(a.trk||"");return !!n&&!!trkHref(a.trk||"")&&n.toLowerCase()===String(a.nick||"").trim().toLowerCase()};
+const repOf=id=>{const r=rat[id];return r&&(r.up>0||r.down>0)?` 👍${r.up} 👎${r.down}`:""};
+function matchOf(a){
+  if(!prof.nick||a.authorId===myId)return null;
+  const ri=RANKS.indexOf(a.lvl),mi=RANKS.indexOf(prof.lvl);
+  return {rank:ri>=0&&mi>=0&&Math.abs(ri-mi)<=1,role:!!(a.need&&prof.role&&a.need[prof.role]>0),srv:!!a.srv&&a.srv===prof.srv};
+}
+function matchHtml(a){
+  const m=matchOf(a);if(!m)return "";
+  const n=(m.rank?1:0)+(m.role?1:0)+(m.srv?1:0),f=(k,l)=>l.toLowerCase()+" "+(m[k]?"✓":"✗");
+  return `<div class="note" style="margin-top:6px;color:${n===3?"var(--ok)":"var(--mut)"}">✨ ${t("match")} ${n}/3 · ${f("rank",t("rank"))} · ${f("role",t("role"))} · ${f("srv",t("srv"))}</div>`;
+}
+const canRate=id=>id!==myId&&(convs.some(c=>(c.parts||[]).includes(id))||groups.some(g=>(g.members||[]).includes(id)));
+const rateHtml=id=>{const m=myRat[id];return `<span class="rate"><button class="sec ${m===1?"on":""}" data-rate="${esc(id)}" data-v="1">👍</button><button class="sec ${m===-1?"on":""}" data-rate="${esc(id)}" data-v="-1">👎</button></span>`};
+async function rate(id,val){
+  if(!db||!myId||id===myId)return;
+  const old=myRat[id],r=rat[id]||(rat[id]={up:0,down:0});
+  if(old===1)r.up--;if(old===-1)r.down--;
+  if(val>0)r.up++;else r.down++;
+  myRat[id]=val>0?1:-1;
+  render();renderRateBar();if($("#pv").classList.contains("on")&&pvAd)showProfile(pvAd);
+  await db.collection("ratings").doc(sid(id)+"_"+sid(myId)).set({ratedId:id,raterId:myId,up:val>0,at:Date.now()}).catch(()=>{});
+}
+function renderRateBar(){
+  const o=thread&&thread.kind==="conv"&&thread.other;
+  $("#rateBar").innerHTML=o&&canRate(o)?`${t("rate")}: ${esc(thread.title)} ${rateHtml(o)}<span class="rep">${repOf(o)}</span>`:"";
+}
+$("#rateBar").onclick=async e=>{const b=e.target.closest("button");if(b&&b.dataset.rate)await rate(b.dataset.rate,+b.dataset.v)};
+async function joinAd(adId){
+  const a=ads.find(x=>x.id===adId);if(!a||!db)return;
+  if(!myId)return alert(t("alertDb"));
+  if(!prof.nick)return alert(t("alertProf"));
+  if(!prof.trk)return alert(t("alertTrk"));
+  const id=adId+"_"+sid(myId),ex=allThreads().find(x=>x.kind==="conv"&&x.id===id);
+  if(ex){openThread(ex);return}
+  const th={kind:"conv",id,path:"convs/"+id,title:a.nick,sub:a.tour+(a.date?" · "+a.date:""),at:0,last:"",other:a.authorId,fresh:a};
+  openThread(th);
+  await sendText(th,t("joinMsg").replace("{nick}",prof.nick).replace("{rank}",prof.lvl||"").replace("{role}",roleLabel(prof.role||"Fragger")).replace("{srv}",prof.srv||a.srv||"").replace("{tour}",a.tour).replace("{date}",a.date||""));
+}
+let seen={};try{seen=JSON.parse(localStorage.getItem("seen")||"{}")}catch(e){}
+const unr=x=>!!x.by&&x.by!==myId&&(x.at||0)>(seen[x.kind+":"+x.id]||0);
+function markSeen(x){seen[x.kind+":"+x.id]=x.at||0;try{localStorage.setItem("seen",JSON.stringify(seen))}catch(e){}}
+function updateBadge(){const n=myThreads().filter(unr).length,b=$("#badge");b.hidden=!n;b.textContent=n;document.title=(n?"("+n+") ":"")+"Fortnite · "+t("title")}
+function refreshChats(){
+  if(thread){const c=myThreads().find(x=>same(x,thread));if(c)markSeen(c)}
+  renderChats();updateBadge();renderRateBar();renderActs();if($("#chat").classList.contains("on"))renderChips();
+}
+function showProfile(id){
+  const a=ads.find(x=>x.id===id);if(!a)return;pvAd=id;
+  const row=(k,v)=>v?`<div class="pr"><span>${t(k)}</span><b>${v}</b></div>`:"",tk=trkHref(a.trk||"");
+  $("#pvBox").innerHTML=`<h2>${esc(a.nick)}</h2>`+row("plat",esc(a.plat))+row("rank",esc(a.lvl))+row("role",a.role?esc(roleLabel(a.role)):"")+row("region",esc(a.reg))+
+    (a.disc?`<div class="pr"><span>Discord</span><button class="sec" data-copy="${esc(a.disc)}">${esc(a.disc)}</button></div>`:"")+
+    (tk?`<div class="pr"><span>Tracker</span><a class="sec" href="${tk}" target="_blank" rel="noopener noreferrer">📊 PR</a></div>`:"")+
+    (verOf(a)?`<div class="pr"><span></span><b class="ok-v">${t("verified")}</b></div>`:"")+`<div class="pr"><span>${t("reputation")}</span><b>${repOf(a.authorId)||"—"}</b></div>`+(canRate(a.authorId)?`<div class="pr"><span>${t("rate")}</span>${rateHtml(a.authorId)}</div>`:"")+`<div class="acts">${a.authorId!==myId?`<button class="pri" style="margin:0;width:auto" data-chat2="${a.id}">${t("chat")}</button>`:""}${a.authorId!==myId?`<button class="sec" data-blkp="${esc(a.authorId)}" data-nick="${esc(a.nick)}">🚫 ${t("block")}</button>`:""}<button class="sec" data-pvx="1">${t("close")}</button></div>`;
+  $("#pv").classList.add("on");
+}
+$("#pv").onclick=e=>{if(e.target.id==="pv"){$("#pv").classList.remove("on");if(askRes){const r=askRes;askRes=null;r(false)}}};
+$("#pvBox").onclick=async e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.y!==undefined&&askRes){const r=askRes;askRes=null;$("#pv").classList.remove("on");r(b.dataset.y==="1");return}
+  if(b.dataset.blkp){$("#pv").classList.remove("on");blockUser(b.dataset.blkp,b.dataset.nick);return}
+  if(b.dataset.rate){await rate(b.dataset.rate,+b.dataset.v);return}
+  if(b.dataset.pvx)$("#pv").classList.remove("on");
+  if(b.dataset.chat2){$("#pv").classList.remove("on");startChat(b.dataset.chat2)}
+  if(b.dataset.copy){try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent=t("copied")}catch(_){}}
+};
+let blocked={},hid={},msgIds=[],askRes=null;
+try{blocked=JSON.parse(localStorage.getItem("blocked")||"{}")}catch(e){}
+try{hid=JSON.parse(localStorage.getItem("hid")||"{}")}catch(e){}
+const saveLS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const hidden=x=>(x.kind==="conv"&&!!blocked[x.other])||(x.kind==="group"&&!!blocked[x.owner])||(hid[x.kind+":"+x.id]!=null&&(x.at||0)<=hid[x.kind+":"+x.id]);
+function myThreads(){return allThreads().filter(x=>!hidden(x))}
+function ask(msg){return new Promise(res=>{askRes=res;$("#pvBox").innerHTML=`<p>${esc(msg)}</p><div class="acts"><button class="pri" style="margin:0;width:auto" data-y="1">OK</button><button class="sec" data-y="0">${t("cancel")}</button></div>`;$("#pv").classList.add("on")})}
+function closeChat(){$("#cClose").onclick()}
+async function blockUser(id,nick){
+  if(!id||id===myId)return;
+  if(!await ask(t("confirmBlock").replace("{n}",nick)))return;
+  blocked[id]=nick;saveLS("blocked",blocked);
+  if(thread&&thread.kind==="conv"&&thread.other===id)closeChat();
+  render();renderChats();updateBadge();
+  if(thread&&$("#chat").classList.contains("on"))openThread(thread);
+}
+function unblock(id){delete blocked[id];saveLS("blocked",blocked);render();renderChats();updateBadge()}
+function renderActs(){
+  const bar=$("#actBar");if(!thread){bar.innerHTML="";return}
+  let h="";
+  if(thread.kind==="conv"){
+    if(thread.other)h+=`<button class="sec" data-act="block">🚫 ${t("block")}</button>`;
+    if(!thread.fresh)h+=`<button class="sec" data-act="del">🗑 ${t("delChat")}</button>`;
+  }else{
+    const g=groups.find(x=>x.id===thread.id);
+    if(g&&g.ownerId===myId)h+=`<button class="sec" data-act="delg">🗑 ${t("delGroup")}</button>`;
+    else if(g)h+=`<button class="sec" data-act="leave">🚪 ${t("leaveGroup")}</button>`;
+  }
+  bar.innerHTML=h;
+}
+$("#actBar").onclick=async e=>{
+  const b=e.target.closest("button");if(!b||!thread||!db)return;
+  const th=thread,act=b.dataset.act;
+  if(act==="block")blockUser(th.other,th.title);
+  if(act==="del"){
+    if(!await ask(t("confirmDel")))return;
+    const cur=allThreads().find(x=>same(x,th));
+    hid[th.kind+":"+th.id]=(cur&&cur.at)||Date.now();saveLS("hid",hid);
+    closeChat();renderChats();updateBadge();
+  }
+  if(act==="delg"){
+    if(!await ask(t("confirmDelG")))return;
+    await Promise.all(msgIds.map(i=>db.collection(th.path+"/msgs").doc(i).delete().catch(()=>{})));
+    await db.collection("groups").doc(th.id).delete().catch(()=>{});
+    closeChat();
+  }
+  if(act==="leave"){
+    const g=groups.find(x=>x.id===th.id);if(!g)return;
+    if(!await ask(t("confirmLeave")))return;
+    const k=(g.members||[]).indexOf(myId);
+    await db.collection("groups").doc(th.id).update({members:(g.members||[]).filter(m=>m!==myId),nicks:(g.nicks||[]).filter((_,i)=>i!==k)}).catch(()=>{});
+    closeChat();
+  }
+};
+$("#msgs").onclick=e=>{const b=e.target.closest("button");if(b&&b.dataset.blk)blockUser(b.dataset.blk,b.dataset.nick)};
+function allThreads(){
+  const a=convs.map(c=>({kind:"conv",id:c.id,path:"convs/"+c.id,title:c.ownerId===myId?c.respNick:c.ownerNick,sub:c.tour+(c.date?" · "+c.date:""),at:c.lastAt||0,by:c.lastBy,other:c.ownerId===myId?c.respId:c.ownerId,last:c.lastText||""}));
+  const g=groups.map(x=>({kind:"group",id:x.id,path:"groups/"+x.id,title:"👥 "+(x.name||t("group")),sub:x.tour+" · "+(x.nicks||[]).join(", "),at:x.lastAt||0,by:x.lastBy,owner:x.ownerId,last:x.lastText||""}));
+  return a.concat(g).sort((p,q)=>q.at-p.at);
+}
+const same=(x,y)=>x&&y&&x.kind===y.kind&&x.id===y.id;
+function renderChips(){
+  const ts=myThreads();if(thread&&!ts.some(x=>same(x,thread)))ts.unshift(thread);
+  $("#chips").innerHTML=ts.map(x=>`<button class="chip ${same(x,thread)?"on":""}" data-k="${x.kind}" data-i="${esc(x.id)}">${esc(x.title)}${unr(x)?'<i class="dot"></i>':""}</button>`).join("");
+}
+function renderChats(){
+  const box=$("#chatList");
+  if(!db||!myId){box.innerHTML=`<div class="empty">${t("loginMsg")}</div>`;return}
+  let h="";
+  ads.filter(a=>a.authorId===myId).forEach(a=>{
+    const cs=convs.filter(c=>c.adId===a.id&&c.ownerId===myId).sort((p,q)=>(q.lastAt||0)-(p.lastAt||0));
+    if(!cs.length)return;
+    h+=`<div class="card"><b>${esc(a.tour)}</b>${a.date?" · "+esc(a.date):""}<div class="note">${t("pickGroup")}</div>`+
+      cs.map(c=>`<div class="pick"><input type="checkbox" data-g="${a.id}" value="${esc(c.respId)}" data-nick="${esc(c.respNick)}"><button class="sec" data-open="conv:${esc(c.id)}">💬 ${esc(c.respNick)}</button>${unr({kind:"conv",id:c.id,at:c.lastAt,by:c.lastBy})?'<i class="dot"></i>':""}<small>${esc(c.lastText||"")}</small></div>`).join("")+
+      `<button class="pri" data-mk="${a.id}">${t("mkGroup")}</button></div>`;
+  });
+  const ts=myThreads();
+  h+=`<h2>${t("allChats")}</h2>`+(ts.length?ts.map(x=>`<button class="th ${same(x,thread)?"on":""}" data-open="${x.kind}:${esc(x.id)}"><b>${esc(x.title)}</b>${unr(x)?'<i class="dot"></i>':""}<small>${esc(x.sub)}</small><small>${esc(x.last)}</small></button>`).join(""):`<div class="empty">${t("noChats")}</div>`);
+  const bl=Object.entries(blocked);
+  if(bl.length)h+=`<h2>🚫 ${t("blockedH")}</h2>`+bl.map(([id,n])=>`<div class="pick"><b>${esc(n)}</b><span style="flex:1"></span><button class="sec" data-unblock="${esc(id)}">${t("unblock")}</button></div>`).join("");
+  box.innerHTML=h;
+}
+function openThread(th){
+  if(!db)return;
+  if(hid[th.kind+":"+th.id]!=null){delete hid[th.kind+":"+th.id];saveLS("hid",hid)}
+  if(unsubMsgs){unsubMsgs();unsubMsgs=null}
+  thread=th;$("#cTitle").textContent=th.title;$("#cSub").textContent=th.sub;$("#chat").classList.add("on");$("#msgs").innerHTML="";
+  const cur=myThreads().find(x=>same(x,th));if(cur)markSeen(cur);
+  updateBadge();renderChats();renderChips();renderRateBar();renderActs();
+  if(th.fresh){$("#msgs").innerHTML=`<div class="empty">${t("hello")}</div>`;return}
+  unsubMsgs=db.collection(th.path+"/msgs").orderBy("at","asc").onSnapshot(snap=>{
+    $("#msgs").innerHTML=(msgIds=snap.docs.map(d=>d.id),snap.docs.map(d=>d.data()).filter(x=>!blocked[x.authorId]).map(x=>`<div class="m ${x.authorId===myId?"me":""}"><small>${esc(x.nick)}${x.authorId!==myId?` <button class="blk" data-blk="${esc(x.authorId)}" data-nick="${esc(x.nick)}">🚫</button>`:""}</small>${esc(x.text)}</div>`).join(""))||`<div class="empty">${t("hello")}</div>`;
+    $("#msgs").scrollTop=1e9;
+  },()=>{});
+}
+function startChat(adId){
+  const a=ads.find(x=>x.id===adId);if(!a||!db)return;
+  if(!myId)return alert(t("alertDb"));
+  if(a.authorId===myId){showTab("chats");return}
+  const id=adId+"_"+sid(myId),ex=allThreads().find(x=>x.kind==="conv"&&x.id===id);
+  openThread(ex||{kind:"conv",id,path:"convs/"+id,title:a.nick,sub:a.tour+(a.date?" · "+a.date:""),at:0,last:"",other:a.authorId,fresh:a});
+}
+async function mkGroup(adId){
+  const a=ads.find(x=>x.id===adId);if(!a||!db)return;
+  const bx=[...document.querySelectorAll('input[data-g="'+adId+'"]:checked')];
+  if(!bx.length)return alert(t("alertGroup"));
+  const members=[myId],nicks=[prof.nick||a.nick];
+  bx.forEach(b=>{members.push(b.value);nicks.push(b.dataset.nick)});
+  const now=Date.now(),ref=await db.collection("groups").add({adId,tour:a.tour,date:a.date||"",ownerId:myId,members,nicks,name:a.tour,lastAt:now,lastBy:myId,lastText:""});
+  openThread({kind:"group",id:ref.id,path:"groups/"+ref.id,title:"👥 "+a.tour,sub:a.tour+" · "+nicks.join(", "),at:now,last:""});
+}
+$("#chatList").onclick=e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.mk)mkGroup(b.dataset.mk);
+  if(b.dataset.unblock)unblock(b.dataset.unblock);
+  if(b.dataset.open){const [k,...r]=b.dataset.open.split(":"),id=r.join(":");const th=myThreads().find(x=>x.kind===k&&x.id===id);if(th)openThread(th)}
+};
+$("#chips").onclick=e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const th=myThreads().find(x=>x.kind===b.dataset.k&&x.id===b.dataset.i);if(th)openThread(th);
+};
+$("#cClose").onclick=()=>{$("#chat").classList.remove("on");if(unsubMsgs){unsubMsgs();unsubMsgs=null}thread=null;renderChats();updateBadge()};
+async function send(){
+  const x=$("#cIn").value.trim();if(!x||!thread)return;
+  if(!prof.nick)return alert(t("alertProf"));
+  $("#cIn").value="";
+  return sendText(thread,x);
+}
+async function sendText(th,x){
+  const now=Date.now(),last=x.slice(0,80);
+  try{
+    const ref=db.collection(th.kind==="conv"?"convs":"groups").doc(th.id);
+    const addMsg=()=>db.collection(th.path+"/msgs").add({authorId:myId,nick:prof.nick,text:x,at:now});
+    if(th.fresh){
+      const a=th.fresh;
+      await ref.set({adId:a.id,tour:a.tour,date:a.date||"",ownerId:a.authorId,ownerNick:a.nick,respId:myId,respNick:prof.nick,parts:[a.authorId,myId],lastAt:now,lastBy:myId,lastText:last});
+      th.fresh=null;await addMsg();openThread(th);
+    }else{await addMsg();await ref.update({lastAt:now,lastBy:myId,lastText:last})}
+  }catch(e){console.error(e)}
+}
+$("#cSend").onclick=send;$("#cIn").onkeydown=e=>{if(e.key==="Enter")send()};
+
+applyLang();
+if(Object.values(firebaseConfig).some(v=>String(v).startsWith("COLE_AQUI"))){
+  $("#list").innerHTML=`<div class="empty">${t("setup")}</div>`;
+  $("#authBtn").hidden=true;
+}else{
+  const app=initializeApp(firebaseConfig),auth=getAuth(app);
+  let unsubR=null;
+  db=mkDb(getFirestore(app));
+  doLogin=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(()=>{});
+  doLogout=()=>signOut(auth);
+  $("#authBtn").onclick=()=>auth.currentUser?doLogout():doLogin();
+  onAuthStateChanged(auth,u=>{
+    [unsubAds,unsubC,unsubG,unsubMsgs,unsubR].forEach(f=>f&&f());unsubAds=unsubC=unsubG=unsubMsgs=unsubR=null;
+    myId=u?u.uid:null;ads=[];convs=[];groups=[];rat={};myRat={};loaded=false;thread=null;
+    $("#chat").classList.remove("on");
+    const b=$("#authBtn");b.dataset.i18n=u?"logout":"login";b.textContent=t(b.dataset.i18n);
+    if(u&&!prof.nick&&u.displayName&&editing)$("#pNick").value=u.displayName.split(" ")[0];
+    render();renderChats();
+    if(!u)return;
+    unsubC=db.collection("convs").where("parts","array-contains",myId).onSnapshot(sn=>{convs=sn.docs.map(d=>({id:d.id,...d.data()}));refreshChats()},()=>{});
+    unsubG=db.collection("groups").where("members","array-contains",myId).onSnapshot(sn=>{groups=sn.docs.map(d=>({id:d.id,...d.data()}));refreshChats()},()=>{});
+    unsubR=db.collection("ratings").onSnapshot(sn=>{rat={};myRat={};sn.docs.forEach(d=>{const x=d.data(),r=rat[x.ratedId]||(rat[x.ratedId]={up:0,down:0});x.up?r.up++:r.down++;if(x.raterId===myId)myRat[x.ratedId]=x.up?1:-1});render();renderRateBar()},()=>{});
+    unsubAds=db.collection("ads").orderBy("createdAt","desc").onSnapshot(sn=>{loaded=true;ads=sn.docs.map(d=>({id:d.id,...d.data()}));render();renderChats()},()=>{loaded=true;render()});
+  });
+}
+</script>
+</body>
+</html>
